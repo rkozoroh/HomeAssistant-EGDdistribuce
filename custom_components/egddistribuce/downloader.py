@@ -10,9 +10,8 @@ def getRegion():
 def getHDO():
     return "https://hdo.distribuce24.cz/casy"
 
-def getHoliday():
-    cz_holidays = holidays.CZ()  # this is a dict
-    dateNow = datetime.datetime.now().date()
+def getHoliday(dateNow):
+    cz_holidays = holidays.CZ()  # this is a dict    
     return (dateNow in cz_holidays)
 
 def parseRegion(jsonRegion,psc):
@@ -37,7 +36,7 @@ def parseHDO(jsonHDO,HDORegion,HDO_A,HDO_B,HDO_DP):
 
     HDOStatus=False
 
-    isCZHoliday=getHoliday()
+    isCZHoliday=getHoliday(datetime.datetime.now().date())
 
     
     for itemData in output_hdo_dict:
