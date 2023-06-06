@@ -23,21 +23,29 @@ def parseRegion(jsonRegion,psc):
             unique_region_list.append(itemRegion['Region'])
     return unique_region_list[0]
 
-def parseHDO(jsonHDO,HDORegion,HDO_A,HDO_B,HDO_DP):
+def parseHDO(jsonHDO,HDORegion,HDO_A,HDO_B,HDO_DP,dateNowTime):
     HDO_Date_Od=[]
     HDO_Date_Do=[]
     HDO_Cas_Od = []
     HDO_Cas_Do = []
     output_hdo_dict = [x for x in jsonHDO if x['A'] == HDO_A and x['B'] == HDO_B and (x['DP'] == HDO_DP or x['DP'] == '0' + HDO_DP) and x['region'] == HDORegion]
-    dateNow = datetime.datetime.now().date()
-    dateNowTime = datetime.datetime.now()
+    #dateNow = datetime.datetime.now().date()
+    dateNow = dateNowTime.date()
+    #dateNowTime = datetime.datetime.now()
     #roll back
     rounded_now = dateNowTime.replace(second=0, microsecond=0)
 
     HDOStatus=False
 
-    isCZHoliday=getHoliday(datetime.datetime.now().date())
+    isCZHoliday=getHoliday(dateNow)
 
+    # Initialize flag variables
+    found_next_from = False
+    found_next_to = False
+
+    # Initialize next "from" and "to" variables
+    next_from_time = None
+    next_to_time = None
     
     for itemData in output_hdo_dict:
         str_date_time_od = itemData['od']['rok'] + "-" + itemData['od']['mesic'] + "-" + itemData['od']['den']
@@ -64,10 +72,15 @@ def parseHDO(jsonHDO,HDORegion,HDO_A,HDO_B,HDO_DP):
 
             for x in range(len(HDO_Cas_Od)):
                 HDD_Date_od_obj = datetime.datetime.strptime(HDO_Cas_Od[x], '%H:%M:%S')
-                HDD_Date_do_obj = datetime.datetime.strptime(HDO_Cas_Do[x], '%H:%M:%S')
-                #roll back timeNow = datetime.datetime.strptime(dateNowTime.strftime('%H:%M:%S'), '%H:%M:%S')
+                HDD_Date_do_obj = datetime.datetime.strptime(HDO_Cas_Do[x], '%H:%M:%S')                
                 timeNow = datetime.datetime.strptime(rounded_now.strftime('%H:%M:%S'), '%H:%M:%S')
+                if HDD_Date_od_obj > timeNow and not found_next_from:
+                    next_from_time = datetime.datetime.combine(dateNowTime,HDD_Date_od_obj.time())
+                    found_next_from = True                
                 if HDD_Date_od_obj <= timeNow <= HDD_Date_do_obj:
                     HDOStatus=True
-    return HDOStatus,HDO_Cas_Od,HDO_Cas_Do;
-    #return(HDOStatus)
+                    next_to_time = datetime.datetime.combine(dateNowTime,HDD_Date_do_obj.time())
+            if not found_next_from:
+                _status, _HDO_Cas_Od,_HDO_Cas_Do, _HDO_next_from, _HDO_next_to  = parseHDO(jsonHDO,HDORegion,HDO_A,HDO_B,HDO_DP, (datetime.datetime.combine(dateNowTime + datetime.timedelta(days=1), datetime.time.min)))
+                next_from_time=datetime.datetime.combine(dateNowTime + datetime.timedelta(days=1),_HDO_next_from.time())
+    return HDOStatus,HDO_Cas_Od,HDO_Cas_Do,next_from_time,next_to_time;

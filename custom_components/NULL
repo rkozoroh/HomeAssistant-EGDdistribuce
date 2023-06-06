@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\RadomírKureèka\source\repos\rkozoroh\HomeAssistant-EGDdistribuce\custom_components\egddistribuce\debug_timestamp_sensor.py", line 12, in <module>
+    import downloader
+  File "C:\Users\RadomírKureèka\source\repos\rkozoroh\HomeAssistant-EGDdistribuce\custom_components\egddistribuce\downloader.py", line 85
+    if not found_next_from
+                          ^
+SyntaxError: expected ':'

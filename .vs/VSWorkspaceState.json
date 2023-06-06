@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\custom_components",
+    "\\custom_components\\egddistribuce"
   ],
+  "SelectedNode": "\\custom_components\\egddistribuce\\sensor.py",
   "PreviewInSolutionExplorer": false
 }

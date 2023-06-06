@@ -58,7 +58,9 @@ class EgdDistribuce(BinarySensorEntity):
         self.HDO_Cas_Od = []
         self.HDO_Cas_Do = []
         self.update()
-
+        self._attributes = {}
+        self.HDO_next_from = None
+        self.HDO_next_to = None
 
     @property
     def name(self):
@@ -70,19 +72,24 @@ class EgdDistribuce(BinarySensorEntity):
             return "mdi:transmission-tower"
         else:
             return "mdi:power-off"
+    
     @property
     def is_on(self):
-        self.status, self.HDO_Cas_Od,self.HDO_Cas_Do  = downloader.parseHDO(self.responseHDOJson,self.region,self.codeA,self.codeB,self.codeDP)
-        #self.status = downloader.parseHDO(self.responseHDOJson,self.region,self.codeA,self.codeB,self.codeDP)
+        datum = datetime.now()
+        #datum = datetime(2023, 5, 19, 17, 30, 0)
+        self.status, self.HDO_Cas_Od,self.HDO_Cas_Do, self.HDO_next_from, self.HDO_next_to  = downloader.parseHDO(self.responseHDOJson,self.region,self.codeA,self.codeB,self.codeDP,datum) 
         return self.status
 
     @property
-    def device_state_attributes(self):
-        attributes = {}
-        #attributes['response_json'] = downloader.parseHDO(self.responseHDOJson,self.region,self.codeA,self.codeB,self.codeDP)
-        attributes['HDO Times'] = self.get_times()
+    def extra_state_attributes(self):
+        """Return extra state attributes."""
+        attributes = dict(
+            HDOTimes = self.get_times(),
+            HDO_next_from = self.HDO_next_from,
+            HDO_next_to = self.HDO_next_to,
+        )
         return attributes
-        
+ 
     @property
     def should_poll(self):
         return True
@@ -101,9 +108,9 @@ class EgdDistribuce(BinarySensorEntity):
         for n in self.HDO_Cas_Od:
             timeReport = timeReport + '{}'.format(n) + ' - ' +self.HDO_Cas_Do[i] + '\n | '
             i += 1
-        return timeReport
+        return timeReport[:-3]
 
-    @Throttle(MIN_TIME_BETWEEN_SCANS)
+    #@Throttle(MIN_TIME_BETWEEN_SCANS)
     def update(self):
         responseRegion = requests.get(downloader.getRegion(), verify=False)
         if responseRegion.status_code == 200:
@@ -116,3 +123,5 @@ class EgdDistribuce(BinarySensorEntity):
         else:
             self.last_update_success = False
         
+
+
