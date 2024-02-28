@@ -57,6 +57,7 @@ class EgdDistribuce(BinarySensorEntity):
         """Return extra state attributes."""
         attributes = dict(
             HDOTimes = self.get_times(),
+            HDOTimesHTML = self.get_times().replace('\n | ', '<br/>'),
             HDO_next_from = self.HDO_next_from,
             HDO_next_to = self.HDO_next_to,
         )
