@@ -107,7 +107,7 @@ class EgdDistribuce(BinarySensorEntity):
         i=0
         timeReport=""
         for n in self.HDO_Cas_Od:
-            timeReport = timeReport[:-3] + '{}'.format(n) + ' - ' +self.HDO_Cas_Do[i][:-3] + '\n | '
+            timeReport = timeReport + '{}'.format(n)[:-3] + ' - ' +self.HDO_Cas_Do[i][:-3] + '\n | '
             i += 1
         return timeReport[:-3]
 
