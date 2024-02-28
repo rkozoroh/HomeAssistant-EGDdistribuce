@@ -109,7 +109,7 @@ class EgdDistribuce(BinarySensorEntity):
         for n in self.HDO_Cas_Od:
             timeReport = timeReport + '{}'.format(n) + ' - ' +self.HDO_Cas_Do[i] + '\n | '
             i += 1
-        return timeReport[:-3]
+        return timeReport[:-3].strip('0')
 
     #@Throttle(MIN_TIME_BETWEEN_SCANS)
     def update(self):
