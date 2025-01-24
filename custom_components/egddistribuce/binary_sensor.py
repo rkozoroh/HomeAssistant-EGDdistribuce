@@ -113,11 +113,11 @@ class EgdDistribuce(BinarySensorEntity):
 
     #@Throttle(MIN_TIME_BETWEEN_SCANS)
     def update(self):
-        responseRegion = requests.get(downloader.getRegion(), verify=False)
+        responseRegion = requests.get(downloader.getRegion(), verify=True)
         if responseRegion.status_code == 200:
             self.responseRegionJson = responseRegion.json() 
             self.region=downloader.parseRegion(self.responseRegionJson,self.psc)
-            responseHDO = requests.get(downloader.getHDO(), verify=False)
+            responseHDO = requests.get(downloader.getHDO(), verify=True)
             if responseHDO.status_code == 200:
                 self.responseHDOJson = responseHDO.json()
                 self.last_update_success = True
