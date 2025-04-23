@@ -4,7 +4,7 @@ import voluptuous as vol
 from . import downloader
 from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 
 DOMAIN = 'egddistribuce'
@@ -48,7 +48,7 @@ class TimestampSensor(Entity):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_TIMESTAMP
+        return SensorDeviceClass.TIMESTAMP
 
     async def async_update(self):
         self._state = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
